@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: hexagonal-demo
+  data:
+    mongodb:
+      uri: mongodb://admin:1234@localhost:27017/hexagonal?authSource=admin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8080
