@@ -10,10 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class ProductService implements CreateProductUseCase {
 
     private final ProductRepositoryPort productRepositoryPort;
+
+    public ProductService(ProductRepositoryPort productRepositoryPort) {
+        this.productRepositoryPort = productRepositoryPort;
+    }
 
     @Override
     public Product createProduct(Product product) {

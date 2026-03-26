@@ -12,10 +12,13 @@ import java.util.stream.Collectors;
 
 @Component
 @Primary
-@RequiredArgsConstructor
 public class ProductMongoAdapter implements ProductRepositoryPort {
 
     private final MongoProductRepository mongoProductRepository;
+
+    public ProductMongoAdapter(MongoProductRepository mongoProductRepository) {
+        this.mongoProductRepository = mongoProductRepository;
+    }
 
     @Override
     public Product save(Product product) {
