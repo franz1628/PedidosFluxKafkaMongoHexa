@@ -2,13 +2,10 @@ package com.example.hexagonal.infrastructure.adapter.out.persistence.mongodb;
 
 import com.example.hexagonal.application.port.out.ProductRepositoryPort;
 import com.example.hexagonal.domain.model.Product;
-import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @Primary
@@ -21,33 +18,31 @@ public class ProductMongoAdapter implements ProductRepositoryPort {
     }
 
     @Override
-    public Product save(Product product) {
+    public Mono<Product> save(Product product) {
         ProductEntity entity = ProductEntity.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .build();
-        
-        ProductEntity savedEntity = mongoProductRepository.save(entity);
-        
-        return new Product(savedEntity.getId(), savedEntity.getName(), savedEntity.getPrice());
+
+        return mongoProductRepository.save(entity)
+                .map(savedEntity -> new Product(savedEntity.getId(), savedEntity.getName(), savedEntity.getPrice()));
     }
 
     @Override
-    public Optional<Product> findById(String id) {
+    public Mono<Product> findById(String id) {
         return mongoProductRepository.findById(id)
                 .map(entity -> new Product(entity.getId(), entity.getName(), entity.getPrice()));
     }
 
     @Override
-    public List<Product> findAll() {
-        return mongoProductRepository.findAll().stream()
-                .map(entity -> new Product(entity.getId(), entity.getName(), entity.getPrice()))
-                .collect(Collectors.toList());
+    public Flux<Product> findAll() {
+        return mongoProductRepository.findAll()
+                .map(entity -> new Product(entity.getId(), entity.getName(), entity.getPrice()));
     }
 
     @Override
-    public void deleteById(String id) {
-        mongoProductRepository.deleteById(id);
+    public Mono<Void> deleteById(String id) {
+        return mongoProductRepository.deleteById(id);
     }
 }

@@ -1,8 +1,8 @@
 package com.example.inventarios.infrastructure.adapter.out.persistence;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import java.util.Optional;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Mono;
 
-public interface SpringDataMongoInventoryRepository extends MongoRepository<InventoryEntity, String> {
-    Optional<InventoryEntity> findByProductId(String productId);
+public interface SpringDataMongoInventoryRepository extends ReactiveMongoRepository<InventoryEntity, String> {
+    Mono<InventoryEntity> findByProductId(String productId);
 }

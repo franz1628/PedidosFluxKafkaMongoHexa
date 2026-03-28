@@ -1,12 +1,12 @@
 package com.example.hexagonal.application.port.out;
 
 import com.example.hexagonal.domain.model.Product;
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ProductRepositoryPort {
-    Product save(Product product);
-    Optional<Product> findById(String id);
-    List<Product> findAll();
-    void deleteById(String id);
+    Mono<Product> save(Product product);
+    Mono<Product> findById(String id);
+    Flux<Product> findAll();
+    Mono<Void> deleteById(String id);
 }

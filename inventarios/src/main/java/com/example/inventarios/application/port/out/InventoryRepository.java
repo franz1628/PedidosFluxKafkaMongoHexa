@@ -1,9 +1,9 @@
 package com.example.inventarios.application.port.out;
 
 import com.example.inventarios.domain.model.InventoryItem;
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 public interface InventoryRepository {
-    Optional<InventoryItem> findByProductId(String productId);
-    void save(InventoryItem inventoryItem);
+    Mono<InventoryItem> findByProductId(String productId);
+    Mono<InventoryItem> save(InventoryItem inventoryItem);
 }

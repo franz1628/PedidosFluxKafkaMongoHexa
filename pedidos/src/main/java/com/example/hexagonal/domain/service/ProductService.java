@@ -6,8 +6,10 @@ import com.example.hexagonal.domain.model.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService implements CreateProductUseCase {
@@ -19,15 +21,15 @@ public class ProductService implements CreateProductUseCase {
     }
 
     @Override
-    public Product createProduct(Product product) {
+    public Mono<Product> createProduct(Product product) {
         return productRepositoryPort.save(product);
     }
 
-    public Optional<Product> getProductById(String id) {
+    public Mono<Product> getProductById(String id) {
         return productRepositoryPort.findById(id);
     }
 
-    public List<Product> getAllProducts() {
+    public Flux<Product> getAllProducts() {
         return productRepositoryPort.findAll();
     }
 }
