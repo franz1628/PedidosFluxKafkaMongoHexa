@@ -5,7 +5,8 @@ import com.example.hexagonal.domain.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -18,22 +19,22 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody Order order) {
+    public Mono<Order> createOrder(@RequestBody Order order) {
         return orderService.createOrder(order);
     }
 
     @GetMapping("/{id}")
-    public Order getOrder(@PathVariable String id) {
-        return orderService.getOrderById(id).orElse(null);
+    public Mono<Order> getOrder(@PathVariable String id) {
+        return orderService.getOrderById(id);
     }
 
     @GetMapping
-    public List<Order> getAllOrders() {
+    public Flux<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOrder(@PathVariable String id) {
-        orderService.deleteOrder(id);
+    public Mono<Void> deleteOrder(@PathVariable String id) {
+        return orderService.deleteOrder(id);
     }
 }

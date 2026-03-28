@@ -5,7 +5,8 @@ import com.example.hexagonal.domain.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/products")
@@ -18,17 +19,17 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
+    public Mono<Product> createProduct(@RequestBody Product product) {
         return productService.createProduct(product);
     }
 
     @GetMapping("/{id}")
-    public Product getProduct(@PathVariable String id) {
-        return productService.getProductById(id).orElse(null);
+    public Mono<Product> getProduct(@PathVariable String id) {
+        return productService.getProductById(id);
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public Flux<Product> getAllProducts() {
         return productService.getAllProducts();
     }
 }

@@ -7,9 +7,11 @@ import com.example.hexagonal.application.port.out.OrderRepositoryPort;
 import com.example.hexagonal.domain.model.Order;
 import org.springframework.stereotype.Service;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService implements CreateOrderUseCase, GetOrderUseCase {
@@ -23,27 +25,27 @@ public class OrderService implements CreateOrderUseCase, GetOrderUseCase {
     }
 
     @Override
-    public Order createOrder(Order order) {
+    public Mono<Order> createOrder(Order order) {
         order.setCreatedAt(LocalDateTime.now());
         if (order.getStatus() == null) {
             order.setStatus("PENDING");
         }
-        Order savedOrder = orderRepositoryPort.save(order);
-        orderEventPublisher.publishOrderCreated(savedOrder);
-        return savedOrder;
+        return orderRepositoryPort.save(order)
+                .flatMap(savedOrder -> orderEventPublisher.publishOrderCreated(savedOrder)
+                        .thenReturn(savedOrder));
     }
 
     @Override
-    public Optional<Order> getOrderById(String id) {
+    public Mono<Order> getOrderById(String id) {
         return orderRepositoryPort.findById(id);
     }
 
     @Override
-    public List<Order> getAllOrders() {
+    public Flux<Order> getAllOrders() {
         return orderRepositoryPort.findAll();
     }
 
-    public void deleteOrder(String id) {
-        orderRepositoryPort.deleteById(id);
+    public Mono<Void> deleteOrder(String id) {
+        return orderRepositoryPort.deleteById(id);
     }
 }
