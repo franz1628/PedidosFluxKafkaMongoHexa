@@ -3,12 +3,11 @@ package com.example.hexagonal.infrastructure.adapter.out.persistence.mongodb;
 import com.example.hexagonal.application.port.out.OrderRepositoryPort;
 import com.example.hexagonal.domain.model.Order;
 import com.example.hexagonal.domain.model.OrderItem;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class OrderMongoAdapter implements OrderRepositoryPort {
@@ -20,27 +19,25 @@ public class OrderMongoAdapter implements OrderRepositoryPort {
     }
 
     @Override
-    public Order save(Order order) {
-        OrderEntity entity = mapToEntity(order);
-        OrderEntity savedEntity = mongoOrderRepository.save(entity);
-        return mapToDomain(savedEntity);
+    public Mono<Order> save(Order order) {
+        return Mono.just(mapToEntity(order))
+                .flatMap(mongoOrderRepository::save)
+                .map(this::mapToDomain);
     }
 
     @Override
-    public Optional<Order> findById(String id) {
+    public Mono<Order> findById(String id) {
         return mongoOrderRepository.findById(id).map(this::mapToDomain);
     }
 
     @Override
-    public List<Order> findAll() {
-        return mongoOrderRepository.findAll().stream()
-                .map(this::mapToDomain)
-                .collect(Collectors.toList());
+    public Flux<Order> findAll() {
+        return mongoOrderRepository.findAll().map(this::mapToDomain);
     }
 
     @Override
-    public void deleteById(String id) {
-        mongoOrderRepository.deleteById(id);
+    public Mono<Void> deleteById(String id) {
+        return mongoOrderRepository.deleteById(id);
     }
 
     private OrderEntity mapToEntity(Order order) {

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 @Component
 public class KafkaOrderConsumer {
@@ -19,8 +20,8 @@ public class KafkaOrderConsumer {
     }
 
     @KafkaListener(topics = "pedidos", groupId = "inventarios-group")
-    public void consume(Order order) {
+    public Mono<Void> consume(Order order) {
         log.info("Consumed Order from Kafka: {}", order);
-        processOrderUseCase.processOrder(order);
+        return processOrderUseCase.processOrder(order);
     }
 }
